@@ -6,6 +6,19 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+
+def calculator(a: float, b: float) -> str:
+    """Useful for performing basic arithmeric calculations with numbers"""
+    print("Tool has been called.")
+    return f"The sum of {a} and {b} is {a + b}"
+
+@tool
+def say_hello(name: str) -> str:
+    """Useful for greeting a user"""
+    print("Tool has been called.")
+    return f"Hello {name}, I hope you are well today"
+
+
 def main():
     model = ChatOpenAI(temperature=0)
 
