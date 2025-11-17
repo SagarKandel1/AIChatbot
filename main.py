@@ -1,16 +1,37 @@
-# This is a sample Python script.
+from langchain_core.messages import HumanMessage
+from langchain_openai import ChatOpenAI
+from langchain.tools import tool
+from langgraph.prebuilt import create_react_agent
+from dotenv import load_dotenv
 
-# Press ⌃R to execute it or replace it with your code.
-# Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
+load_dotenv()
 
+def main():
+    model = ChatOpenAI(temperature=0)
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press ⌘F8 to toggle the breakpoint.
+    tools = []
+    agent_executor = create_react_agent(model, tools)
 
+    print("Welcome to the AI Agent! Type 'quit' to exit .")
+    print("You can ask me to perform tasks or answer questions.")
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
+    while True:
+        user_input = input("\nYou: ").strip()
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+        if user_input == 'quit':
+            print("Goodbye!")
+            break
+
+        print("\nAssistant: ", end="")
+        for chunk in agent_executor.stream(
+                {"messages": [HumanMessage(content=user_input)]}
+            ):
+                if "agent" in chunk and "messages" in chunk["agent"]:
+                    for message in chunk["agent"]["messages"]:
+                        print(message.content, end="")
+
+        print()  # For a new line after the response
+
+if __name__ == "__main__":
+    main()
+
